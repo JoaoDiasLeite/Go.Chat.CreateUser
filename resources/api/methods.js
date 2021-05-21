@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const axios = require('axios');
 const { response } = require('express');
+const settings = require('../settings');
 
 async function apicreateuser(res, req) { //função assincrona para registar utilizador no Rocketchat
 
@@ -24,8 +25,8 @@ async function apicreateuser(res, req) { //função assincrona para registar uti
                     headers: { //header com conteudo application/json para poder fazer post de json
                         'Content-Type': 'application/json',
                         //Criar Token Pessoal na conta de administrador  em Account -> Tokens
-                        'X-Auth-Token': 'DpTop-NOTDK5o7aa0rCyLO2wWu_ljI2VQQeSpAgbU70',
-                        'X-User-Id': 'Ln68H7iXyLbGQTDnJ',
+                        'X-Auth-Token': settings.auth_token,
+                        'X-User-Id': settings.user_id,
 
 
                     }
@@ -41,25 +42,25 @@ async function apicreateuser(res, req) { //função assincrona para registar uti
     } catch (error) {
 
         if ((error.response.data.error).toString().startsWith(req.body.username) == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(401).end("Nome de utilizador já se encontra em utilização!");
         } else if ((error.response.data.error).toString().startsWith("Invalid email") == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(error.response.status).end("Email inváildo!");
         } else if ((error.response.data.error).toString().startsWith(req.body.email) == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(401).end("Email já se encontra em utilização!");
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field verified") == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(406).end("Esperado valor boolean no campo \"verified\".");
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field active") == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(406).end("Esperado valor boolean no campo \"active\".");
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field joinDefaultChannels") == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(406).end("Esperado valor boolean no campo \"joinDefaultChannels\".");
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field sendWelcomeEmail") == true) {
-            console.log(error.response.data.error)
+            // console.log(error.response.data.error)
             return res.status(406).end("Esperado valor boolean no campo \"sendWelcomeEmail\".");
 
         } else {

@@ -11,28 +11,28 @@ function createUser(req, res) { //route de submeter o form
 
     if (result.error) {
         if (((result.error.details[0].message).toString() == ("\"active\" must be a boolean")) == true) { //se não for válido:
-            console.log(result.error)
-            console.log("Esperado valor boolean no campo \"active\"")
+            //console.log(result.error)
+            //console.log("Esperado valor boolean no campo \"active\"")
             return res.status(400).end("Esperado valor boolean no campo \"active\""); //response de código 400 (bad request)
         } else if (((result.error.details[0].message).toString() == ("\"joinDefaultChannels\" must be a boolean")) == true) { //se não for válido:
-            console.log(result.error)
-            console.log("Esperado valor boolean no campo \"joinDefaultChannels\"")
+            //console.log(result.error)
+            //console.log("Esperado valor boolean no campo \"joinDefaultChannels\"")
             return res.status(400).end("Esperado valor boolean no campo \"joinDefaultChannels\""); //response de código 400 (bad request)
         } else if (((result.error.details[0].message).toString() == ("\"requirePasswordChange\" must be a boolean")) == true) { //se não for válido:
-            console.log(result.error)
-            console.log("Esperado valor boolean no campo \"requirePasswordChange\"")
+            //console.log(result.error)
+            //console.log("Esperado valor boolean no campo \"requirePasswordChange\"")
             return res.status(400).end("Esperado valor boolean no campo \"requirePasswordChange\""); //response de código 400 (bad request)
         } else if (((result.error.details[0].message).toString() == ("\"verified\" must be a boolean")) == true) { //se não for válido:
-            console.log(result.error)
-            console.log("Esperado valor boolean no campo \"verified\"")
+            //console.log(result.error)
+            //console.log("Esperado valor boolean no campo \"verified\"")
             return res.status(400).end("Esperado valor boolean no campo \"verified\""); //response de código 400 (bad request)
         } else if (((result.error.details[0].message).toString() == ("\"sendWelcomeEmail\" must be a boolean")) == true) { //se não for válido:
-            console.log(result.error)
-            console.log("Esperado valor boolean no campo \"sendWelcomeEmail\"")
+            //console.log(result.error)
+            //console.log("Esperado valor boolean no campo \"sendWelcomeEmail\"")
             return res.status(400).end("Esperado valor boolean no campo \"sendWelcomeEmail\""); //response de código 400 (bad request)
         } else { //se não for válido:
-            console.log(result.error)
-            console.log("here")
+            //console.log(result.error)
+            //console.log("here")
             return res.status(400).end();
         } //response de código 400 (bad request)
     }
