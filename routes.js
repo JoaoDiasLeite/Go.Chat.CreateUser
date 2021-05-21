@@ -6,7 +6,7 @@ const controller = require('./resources/api/controller')
 
 
 router.get('/', controller.renderForm);
-router.post('/api/createuser', controller.createUser);
+router.post('/gochat/users', controller.createUser);
 router.post('/', controller.registerRocketChat)
 
 
