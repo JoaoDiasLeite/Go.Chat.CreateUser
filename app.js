@@ -10,8 +10,9 @@ const routes = require('./routes');
 
 const { response } = require('express');
 
-app.set('view engine', 'ejs')
+const validationErrorHandler = require('./resources/error/validation-error-handling')
 
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -20,11 +21,11 @@ app.use(bodyParser.json());
 app.use('/', routes);
 
 app.use(function(req, res) {
-    const err = req.path === '/' ? 'API' : 'Not Found';
+    const err = "404 Route Not Found";
 
-    res.status(404).json({ error: err });
+    res.status(404).end(err);
 });
-
+app.use(validationErrorHandler);
 const port = process.env.PORT || 3002;
 app.listen(port, function() { //server está a correr no port 3002       
     console.log(`Running on port ${port}`);

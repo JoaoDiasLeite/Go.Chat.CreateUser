@@ -2,8 +2,15 @@ const Joi = require('joi');
 const axios = require('axios');
 const { response } = require('express');
 const settings = require('../settings');
+const model = require('./model');
+require('dotenv').config();
+const validationError = require('../error/validationError')
 
-async function apicreateuser(res, req) { //função assincrona para registar utilizador no Rocketchat
+
+let auth_token = process.env.AUTH_TOKEN;
+let user_id = process.env.USER_ID;
+
+async function apicreateuser(res, req, next) { //função assincrona para registar utilizador no Rocketchat
 
     try {
         let response = await axios.post('http://localhost:3000/api/v1/users.create', //post para rocketchat api/v1/users.register
@@ -25,51 +32,68 @@ async function apicreateuser(res, req) { //função assincrona para registar uti
                     headers: { //header com conteudo application/json para poder fazer post de json
                         'Content-Type': 'application/json',
                         //Criar Token Pessoal na conta de administrador  em Account -> Tokens
-                        'X-Auth-Token': settings.auth_token,
-                        'X-User-Id': settings.user_id,
+                        'X-Auth-Token': `${auth_token}`,
+                        'X-User-Id': `${user_id}`,
 
 
                     }
                 })
-            .catch(
-                function(error) {
-                    return Promise.reject(error);
-                }
-            );
+            /*  .catch(
+                 function(error) {
 
-        res.end(JSON.stringify(response.data));
+                     return Promise.reject(error);
+
+                 }
+             ); */
+
+        res.status(201).end(JSON.stringify(response.data));
 
     } catch (error) {
 
-        if ((error.response.data.error).toString().startsWith(req.body.username) == true) {
-            // console.log(error.response.data.error)
-            return res.status(401).end("Nome de utilizador já se encontra em utilização!");
+        if (error.code == "ECONNREFUSED") {
+            next(validationError.internal('Nome de utilizador já se encontra em utilização!'))
+            return;
+
+
+        } else if ((error.response.data.error) == undefined) {
+            next(validationError.notAcceptable('Credencias necessárias'))
+            return;
+
+        } else if ((error.response.data.error).toString().startsWith(req.body.username) == true) {
+            next(validationError.conflict('Nome de utilizador já se encontra em utilização!'))
+            return;
+
         } else if ((error.response.data.error).toString().startsWith("Invalid email") == true) {
-            // console.log(error.response.data.error)
-            return res.status(error.response.status).end("Email inváildo!");
+            next(validationError.badRequest('Email inváildo!'))
+            return;;
         } else if ((error.response.data.error).toString().startsWith(req.body.email) == true) {
-            // console.log(error.response.data.error)
-            return res.status(401).end("Email já se encontra em utilização!");
+            next(validationError.conflict('Email já se encontra em utilização!'))
+            return;
+
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field verified") == true) {
-            // console.log(error.response.data.error)
-            return res.status(406).end("Esperado valor boolean no campo \"verified\".");
+            next(validationError.badRequest('Esperado valor boolean no campo verified.'))
+            return;
+
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field active") == true) {
-            // console.log(error.response.data.error)
-            return res.status(406).end("Esperado valor boolean no campo \"active\".");
+            next(validationError.badRequest('Esperado valor boolean no campo active'))
+            return;
+
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field joinDefaultChannels") == true) {
-            // console.log(error.response.data.error)
-            return res.status(406).end("Esperado valor boolean no campo \"joinDefaultChannels\".");
+            next(validationError.badRequest('Esperado valor boolean no campo joinDefaultChannels.'))
+            return;
+
         } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field sendWelcomeEmail") == true) {
-            // console.log(error.response.data.error)
-            return res.status(406).end("Esperado valor boolean no campo \"sendWelcomeEmail\".");
-
+            next(validationError.badRequest('Esperado valor boolean no campo sendWelcomeEmail.'))
+            return;
         } else {
-            //console.log(error)
-            // console.log(error.response.data.error)
-            //console.log(error.response.data.errorType)
+            console.log(error)
 
-            return res.status(error.response.status).end(JSON.stringify(error.response.data.error));
+            //console.log(error.response.data.errorType)
+            next(validationError.badRequest(JSON.stringify(error.response.data.error)))
+            return;
+
         }
+
     }
 }
 async function registerUser(res, name, username, email, pass) { //função assincrona para registar utilizador no Rocketchat
@@ -107,6 +131,7 @@ async function registerUser(res, name, username, email, pass) { //função assin
     }
 
 }
+
 module.exports = {
     apicreateuser,
     registerUser

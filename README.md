@@ -1,4 +1,4 @@
-# RegisterUserRocketchat
+# GoChat
 Aplicação de teste que interaje com a API do Rocketchat para registar um utilizador.
 
 Como correr e utilizar a aplicação: 

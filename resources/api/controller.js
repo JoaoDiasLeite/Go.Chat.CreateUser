@@ -1,42 +1,69 @@
 const Joi = require('joi');
 const model = require('./model');
 const method = require('./methods');
+const validationError = require('../error/validationError')
 
 
 
-function createUser(req, res) { //route de submeter o form
+
+async function createUser(req, res, next) { //route de submeter o form
 
 
     const result = model.schema.validate(req.body); //validação do corpo do request
+    try {
+        const clean = await model.schema.validateAsync(req.body);
+    } catch (error) {
+        // log error
 
-    if (result.error) {
-        if (((result.error.details[0].message).toString() == ("\"active\" must be a boolean")) == true) { //se não for válido:
-            //console.log(result.error)
-            //console.log("Esperado valor boolean no campo \"active\"")
-            return res.status(400).end("Esperado valor boolean no campo \"active\""); //response de código 400 (bad request)
-        } else if (((result.error.details[0].message).toString() == ("\"joinDefaultChannels\" must be a boolean")) == true) { //se não for válido:
-            //console.log(result.error)
-            //console.log("Esperado valor boolean no campo \"joinDefaultChannels\"")
-            return res.status(400).end("Esperado valor boolean no campo \"joinDefaultChannels\""); //response de código 400 (bad request)
-        } else if (((result.error.details[0].message).toString() == ("\"requirePasswordChange\" must be a boolean")) == true) { //se não for válido:
-            //console.log(result.error)
-            //console.log("Esperado valor boolean no campo \"requirePasswordChange\"")
-            return res.status(400).end("Esperado valor boolean no campo \"requirePasswordChange\""); //response de código 400 (bad request)
-        } else if (((result.error.details[0].message).toString() == ("\"verified\" must be a boolean")) == true) { //se não for válido:
-            //console.log(result.error)
-            //console.log("Esperado valor boolean no campo \"verified\"")
-            return res.status(400).end("Esperado valor boolean no campo \"verified\""); //response de código 400 (bad request)
-        } else if (((result.error.details[0].message).toString() == ("\"sendWelcomeEmail\" must be a boolean")) == true) { //se não for válido:
-            //console.log(result.error)
-            //console.log("Esperado valor boolean no campo \"sendWelcomeEmail\"")
-            return res.status(400).end("Esperado valor boolean no campo \"sendWelcomeEmail\""); //response de código 400 (bad request)
-        } else { //se não for válido:
-            //console.log(result.error)
-            //console.log("here")
-            return res.status(400).end();
-        } //response de código 400 (bad request)
+
+        if (result.error) {
+            if (((result.error.details[0].message).toString() == ("\"active\" must be a boolean")) == true) { //se não for válido:
+                next(validationError.badRequest('Esperado valor boolean no campo active'))
+                return;
+            } else if (((result.error.details[0].message).toString() == ("\"joinDefaultChannels\" must be a boolean")) == true) { //se não for válido:
+                next(validationError.badRequest('Esperado valor boolean no campo joinDefaultChannels'))
+                return;
+
+            } else if (((result.error.details[0].message).toString() == ("\"requirePasswordChange\" must be a boolean")) == true) { //se não for válido:
+                next(validationError.badRequest("Esperado valor boolean no campo requirePasswordChange"))
+                return;
+
+            } else if (((result.error.details[0].message).toString() == ("\"verified\" must be a boolean")) == true) { //se não for válido:
+                next(validationError.badRequest('Esperado valor boolean no campo verified'))
+                return;
+
+            } else if (((result.error.details[0].message).toString() == ("\"sendWelcomeEmail\" must be a boolean")) == true) { //se não for válido:
+                next(validationError.badRequest('Esperado valor boolean no campo sendWelcomeEmail'))
+                return;
+
+            } else if ((result.error.details[0].message).toString() == ("\"name\" is required") == true) {
+                next(validationError.badRequest('É necessário preencher o campo nome'));
+                return;
+            } else if ((result.error.details[0].message).toString() == ("\"email\" is required") == true) {
+                next(validationError.badRequest('É necessário preencher o campo email'));
+                return;
+            } else if ((result.error.details[0].message).toString() == ("\"username\" is required") == true) {
+                next(validationError.badRequest('É necessário preencher o campo username'));
+                return;
+            } else if ((result.error.details[0].message).toString() == ("\"password\" is required") == true) {
+                next(validationError.badRequest('É necessário preencher o campo password'));
+                return;
+            } else {
+                console.log(result.error);
+                next(validationError.badRequest())
+                return;
+
+            }
+        }
+        next(error);
     }
-    method.apicreateuser(res, req);
+    try {
+        method.apicreateuser(res, req, next);
+    } catch (error) {
+        return res.status(500).end("RocketChat não se econtra ligado");
+
+    }
+
 };
 
 function registerRocketChat(req, res) { //route de submeter o form

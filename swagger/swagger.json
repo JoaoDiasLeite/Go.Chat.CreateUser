@@ -1,0 +1,65 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Go.Chat",
+        "description": "API Go.Chat",
+        "version": "1.0.0"
+    },
+    "host": "localhost:3002",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/gochat/users": {
+            "post": {
+                "description": "Criar utilizador",
+                "parameters": [{
+                        "name": "username",
+                        "in": "formData",
+                        "description": "Intrduza o nome de utilizador pretendido.",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Introduza o seu nome.",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "Introduza o seu email.",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "Introduza a password pretendida.",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "verified",
+                        "in": "formData",
+                        "description": "Verifique o email.",
+                        "type": "boolean"
+
+                    }
+                ],
+                "responses": {
+                    "201": "Created",
+                    "500": "Something went wrong"
+                }
+            }
+        }
+
+    }
+}
