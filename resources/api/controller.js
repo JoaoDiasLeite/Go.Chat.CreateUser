@@ -9,9 +9,9 @@ const validationError = require('../error/validationError')
 async function createUser(req, res, next) { //route de submeter o form
 
 
-    const result = model.schema.validate(req.body); //validação do corpo do request
+    let result = ''; //= model.schema.validate(req.body); //validação do corpo do request
     try {
-        const clean = await model.schema.validateAsync(req.body);
+        result = await model.schema.validateAsync(req.body);
     } catch (error) {
         // log error
 
