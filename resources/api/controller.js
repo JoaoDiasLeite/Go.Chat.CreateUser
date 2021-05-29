@@ -1,68 +1,84 @@
 const Joi = require('joi');
 const model = require('./model');
 const method = require('./methods');
-const validationError = require('../error/validationError')
+const validationError = require('../error/validationError');
+const rocketchatError = require('../error/rocketchatError');
 
 
 
 
-async function createUser(req, res, next) { //route de submeter o form
+async function createUser(req, res, next) {
 
-
-    let result = ''; //= model.schema.validate(req.body); //validação do corpo do request
+    let validateParams = ''; //= model.schema.validate(req.body); //validação do corpo do request
     try {
-        result = await model.schema.validateAsync(req.body);
+        validateParams = await model.schema.validateAsync(req.body);
     } catch (error) {
-        // log error
 
-
-        if (result.error) {
-            if (((result.error.details[0].message).toString() == ("\"active\" must be a boolean")) == true) { //se não for válido:
+        /* if (error) {
+            if (((error.details[0].message).toString() == ("\"active\" must be a boolean")) == true) { //se não for válido:
                 next(validationError.badRequest('Esperado valor boolean no campo active'))
                 return;
-            } else if (((result.error.details[0].message).toString() == ("\"joinDefaultChannels\" must be a boolean")) == true) { //se não for válido:
+            } else if (((error.details[0].message).toString() == ("\"joinDefaultChannels\" must be a boolean")) == true) { //se não for válido:
                 next(validationError.badRequest('Esperado valor boolean no campo joinDefaultChannels'))
                 return;
 
-            } else if (((result.error.details[0].message).toString() == ("\"requirePasswordChange\" must be a boolean")) == true) { //se não for válido:
+            } else if (((error.details[0].message).toString() == ("\"requirePasswordChange\" must be a boolean")) == true) { //se não for válido:
                 next(validationError.badRequest("Esperado valor boolean no campo requirePasswordChange"))
                 return;
 
-            } else if (((result.error.details[0].message).toString() == ("\"verified\" must be a boolean")) == true) { //se não for válido:
+            } else if (((error.details[0].message).toString() == ("\"verified\" must be a boolean")) == true) { //se não for válido:
                 next(validationError.badRequest('Esperado valor boolean no campo verified'))
                 return;
 
-            } else if (((result.error.details[0].message).toString() == ("\"sendWelcomeEmail\" must be a boolean")) == true) { //se não for válido:
+            } else if (((error.details[0].message).toString() == ("\"sendWelcomeEmail\" must be a boolean")) == true) { //se não for válido:
                 next(validationError.badRequest('Esperado valor boolean no campo sendWelcomeEmail'))
                 return;
 
-            } else if ((result.error.details[0].message).toString() == ("\"name\" is required") == true) {
+            } else if ((error.details[0].message).toString() == ("\"name\" is required") == true) {
                 next(validationError.badRequest('É necessário preencher o campo nome'));
                 return;
-            } else if ((result.error.details[0].message).toString() == ("\"email\" is required") == true) {
+            } else if ((error.details[0].message).toString() == ("\"email\" is required") == true) {
                 next(validationError.badRequest('É necessário preencher o campo email'));
                 return;
-            } else if ((result.error.details[0].message).toString() == ("\"username\" is required") == true) {
+            } else if ((error.details[0].message).toString() == ("\"username\" is required") == true) {
                 next(validationError.badRequest('É necessário preencher o campo username'));
                 return;
-            } else if ((result.error.details[0].message).toString() == ("\"password\" is required") == true) {
+            } else if ((error.details[0].message).toString() == ("\"password\" is required") == true) {
                 next(validationError.badRequest('É necessário preencher o campo password'));
                 return;
             } else {
-                console.log(result.error);
-                next(validationError.badRequest())
+
+                next(validationError.badRequest(error.details[0].message.toString()))
                 return;
 
             }
-        }
-        next(error);
+        } */
+        // console.log(error)
+        return next(validationError.badRequest(error.message));
     }
+
+
+
     try {
-        method.apicreateuser(res, req, next);
-    } catch (error) {
-        return res.status(500).end("RocketChat não se econtra ligado");
+        const result = await method.apicreateuser(validateParams);
+        //console.log(result)
+        return res.status(201).end(JSON.stringify(result.data));
+    } catch (Error) {
+        //console.log(Error)
+        if (Error.code == 400) {
+            return next(rocketchatError.badRequest(Error.message));
+        } else if (Error.code == 406) {
+            return next(rocketchatError.notAcceptable(Error.message));
+        } else if (Error.code == 409) {
+            return next(rocketchatError.conflict(Error.message));
+        } else if (Error.code == 500) {
+            return next(rocketchatError.internal(Error.message));
+        } else {
+            return res.status(400).end("Something Went Wrong")
+        }
 
     }
+
 
 };
 
@@ -124,4 +140,6 @@ module.exports = {
     createUser,
     registerRocketChat,
     renderForm,
+
+
 };

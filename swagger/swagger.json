@@ -52,11 +52,72 @@
                         "description": "Verifique o email.",
                         "type": "boolean"
 
+                    },
+                    {
+                        "name": "roles",
+                        "in": "formData",
+                        "description": "Introduza os roles do utilizador.",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "Admin",
+                                "Moderator",
+                                "Leader",
+                                "Owner",
+                                "user",
+                                "bot",
+                                "guest",
+                                "anonymous",
+                                "Livechat Agent",
+                                "Livechat Manager"
+                            ],
+                            "default": "user",
+
+                            "collectionFormat": "ssv"
+                        },
+                        "minLength": 0,
+                        "maxLength": 10
+
+                    },
+                    {
+                        "name": "joinDefaultChannels",
+                        "in": "formData",
+                        "description": "O utilizador é adicionado aos canais predefinidos.",
+                        "type": "boolean"
+
+                    },
+                    {
+                        "name": "requirePasswordChange",
+                        "in": "formData",
+                        "description": "Necesário alteração de palavra-passe.",
+                        "type": "boolean"
+
+                    },
+                    {
+                        "name": "sendWelcomeEmail",
+                        "in": "formData",
+                        "description": "Enviar email de boas vindas.",
+                        "type": "boolean"
+
                     }
                 ],
                 "responses": {
-                    "201": "Created",
-                    "500": "Something went wrong"
+                    "201": {
+                        "description": "Created "
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "406": {
+                        "description": "Not Acceptable"
+                    },
+                    "409": {
+                        "description": "Conflict"
+                    },
+                    "500": {
+                        "description": "Something went wrong"
+                    }
                 }
             }
         }

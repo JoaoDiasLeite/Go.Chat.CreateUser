@@ -5,96 +5,54 @@ const settings = require('../settings');
 const model = require('./model');
 require('dotenv').config();
 const validationError = require('../error/validationError')
+const controller = require('./controller');
+const { badRequest } = require('../error/validationError');
+const rocketchatError = require('../error/rocketchatError');
 
 
 let auth_token = process.env.AUTH_TOKEN;
 let user_id = process.env.USER_ID;
 
-async function apicreateuser(res, req, next) { //função assincrona para registar utilizador no Rocketchat
-
+async function apicreateuser(userData) { //função assincrona para registar utilizador no Rocketchat
+    let response = '';
+    // console.log(userData);
     try {
-        let response = await axios.post('http://localhost:3000/api/v1/users.create', //post para rocketchat api/v1/users.register
-                {
-                    "username": req.body.username, //json dos parametros do utilizador para registar
-                    "email": req.body.email,
-                    "password": req.body.password,
-                    "name": req.body.name,
-                    "roles": req.body.roles,
-                    "active": req.body.active,
-                    "joinDefaultChannels": req.body.joinDefaultChannels,
-                    "requirePasswordChange": req.body.requirePasswordChange,
-                    "sendWelcomeEmail": req.body.sendWelcomeEmail,
-                    "verified": req.body.verified,
-                    "customFields": req.body.customFields,
-                    //"domain_uuid": stringify(uuidv4())
-
-                }, {
-                    headers: { //header com conteudo application/json para poder fazer post de json
-                        'Content-Type': 'application/json',
-                        //Criar Token Pessoal na conta de administrador  em Account -> Tokens
-                        'X-Auth-Token': `${auth_token}`,
-                        'X-User-Id': `${user_id}`,
+        response = await axios.post('http://localhost:3000/api/v1/users.create',
+            userData, {
+                headers: { //header com conteudo application/json para poder fazer post de json
+                    'Content-Type': 'application/json',
+                    //Criar Token Pessoal na conta de administrador  em Account -> Tokens
+                    'X-Auth-Token': `${auth_token}`,
+                    'X-User-Id': `${user_id}`,
 
 
-                    }
-                })
-            /*  .catch(
-                 function(error) {
-
-                     return Promise.reject(error);
-
-                 }
-             ); */
-
-        res.status(201).end(JSON.stringify(response.data));
+                }
+            })
 
     } catch (error) {
-
+        //console.log(error.response.data.error);
         if (error.code == "ECONNREFUSED") {
-            next(validationError.internal('Nome de utilizador já se encontra em utilização!'))
-            return;
-
+            throw new rocketchatError(500, 'Rocket.Chat Not Working');
 
         } else if ((error.response.data.error) == undefined) {
-            next(validationError.notAcceptable('Credencias necessárias'))
-            return;
+            throw new rocketchatError(406, 'Credenciais necessárias');
 
-        } else if ((error.response.data.error).toString().startsWith(req.body.username) == true) {
-            next(validationError.conflict('Nome de utilizador já se encontra em utilização!'))
-            return;
+
+        } else if ((error.response.data.error).toString().startsWith(userData.username) == true) {
+            throw new rocketchatError(409, 'Nome de utilizador já se encontra em utilização!');
 
         } else if ((error.response.data.error).toString().startsWith("Invalid email") == true) {
-            next(validationError.badRequest('Email inváildo!'))
-            return;;
-        } else if ((error.response.data.error).toString().startsWith(req.body.email) == true) {
-            next(validationError.conflict('Email já se encontra em utilização!'))
-            return;
+            throw new rocketchatError(400, 'Email inváildo!');
 
-        } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field verified") == true) {
-            next(validationError.badRequest('Esperado valor boolean no campo verified.'))
-            return;
+        } else if ((error.response.data.error).toString().startsWith(userData.email) == true) {
+            throw new rocketchatError(409, 'Email já se encontra em utilização!');
 
-        } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field active") == true) {
-            next(validationError.badRequest('Esperado valor boolean no campo active'))
-            return;
-
-        } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field joinDefaultChannels") == true) {
-            next(validationError.badRequest('Esperado valor boolean no campo joinDefaultChannels.'))
-            return;
-
-        } else if ((error.response.data.error).toString().startsWith("Match error: Expected boolean") && (error.response.data.error).toString().endsWith("in field sendWelcomeEmail") == true) {
-            next(validationError.badRequest('Esperado valor boolean no campo sendWelcomeEmail.'))
-            return;
         } else {
-            console.log(error)
-
-            //console.log(error.response.data.errorType)
-            next(validationError.badRequest(JSON.stringify(error.response.data.error)))
-            return;
+            throw new rocketchatError(400, JSON.stringify(error.response.data.error));
 
         }
-
     }
+    return response;
 }
 async function registerUser(res, name, username, email, pass) { //função assincrona para registar utilizador no Rocketchat
 
@@ -132,7 +90,10 @@ async function registerUser(res, name, username, email, pass) { //função assin
 
 }
 
+
+
 module.exports = {
     apicreateuser,
-    registerUser
+    registerUser,
+
 }

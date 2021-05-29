@@ -9,7 +9,7 @@ router.get('/', controller.renderForm);
 router.post('/', controller.registerRocketChat)
 
 //API
-router.post('/gochat/users', controller.createUser);
+router.post('/users', controller.createUser);
 
 
 //Swagger
