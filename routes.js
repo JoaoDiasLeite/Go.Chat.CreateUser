@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const swaggerUi = require('swagger-ui-express'),
-    swaggerDocument = require('./swagger/swagger.json')
+    swaggerDocument = require('./resources/swagger/swagger.json')
 const controller = require('./resources/api/controller')
 
 //Base Registar
