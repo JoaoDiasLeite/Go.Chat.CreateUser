@@ -3,7 +3,6 @@ const app = express();
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
-const validationErrorHandler = require('./resources/error/errors-handler');
 const ErrorsHandler = require('./resources/error/errors-handler');
 
 app.set('view engine', 'ejs')

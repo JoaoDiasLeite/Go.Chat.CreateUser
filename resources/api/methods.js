@@ -1,12 +1,5 @@
-const Joi = require('joi');
 const axios = require('axios');
-const { response } = require('express');
-const settings = require('../settings');
-const model = require('./model');
 require('dotenv').config();
-const validationError = require('../error/validationError')
-const controller = require('./controller');
-const { badRequest } = require('../error/validationError');
 const rocketchatError = require('../error/rocketchatError');
 
 
@@ -24,8 +17,6 @@ async function apicreateuser(userData) { //função assincrona para registar uti
                     //Criar Token Pessoal na conta de administrador  em Account -> Tokens
                     'X-Auth-Token': `${auth_token}`,
                     'X-User-Id': `${user_id}`,
-
-
                 }
             })
 
