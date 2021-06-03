@@ -1,6 +1,6 @@
 const Joi = require('joi')
-const schema = Joi.object({ //esquema para verificação do json do corpo
-    name: Joi.string().required(), //variaveis do form
+const schema = Joi.object({
+    name: Joi.string().required(),
     username: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
@@ -11,8 +11,5 @@ const schema = Joi.object({ //esquema para verificação do json do corpo
     sendWelcomeEmail: Joi.boolean(),
     verified: Joi.bool(),
     customFields: Joi.object(),
-
-
-
 });
 module.exports.schema = schema;

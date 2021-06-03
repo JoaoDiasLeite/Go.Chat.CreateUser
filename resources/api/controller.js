@@ -1,10 +1,7 @@
 const model = require('./model');
 const method = require('./methods');
-const validationError = require('../error/validationError');
-const rocketchatError = require('../error/rocketchatError');
-
-
-
+const validationError = require('../../utils/error/validationError');
+const rocketchatError = require('../../utils/error/rocketchatError');
 
 async function createUser(req, res, next) {
 
@@ -16,25 +13,26 @@ async function createUser(req, res, next) {
     }
     try {
         const result = await method.apicreateuser(validateParams);
-        //console.log(result)
+
         return res.status(201).end(JSON.stringify(result.data));
     } catch (Error) {
-        //console.log(Error)
+
         if (Error.code == 400) {
             return next(rocketchatError.badRequest(Error.message));
+
         } else if (Error.code == 406) {
             return next(rocketchatError.notAcceptable(Error.message));
+
         } else if (Error.code == 409) {
             return next(rocketchatError.conflict(Error.message));
+
         } else if (Error.code == 500) {
             return next(rocketchatError.internal(Error.message));
+
         } else {
-            return res.status(400).end("Something Went Wrong")
+            return res.status(500).end("Something Went Wrong")
         }
-
     }
-
-
 };
 
 function registerRocketChat(req, res) {
@@ -46,16 +44,14 @@ function registerRocketChat(req, res) {
     var passconf = req.body.passconf;
 
 
-    if (name != "" && username != "" && email != "" && pass != "" && pass == passconf) { //se tudo estiver preenchido e confirmação da password estar correta
-        method.registerUser(res, name, username, email, pass); //tenta registar utilizador com função registerUser
+    if (name != "" && username != "" && email != "" && pass != "" && pass == passconf) {
+        method.registerUser(res, name, username, email, pass);
     } else
-    if (name == "") { //se houver algum campo do form em falta
-        res.render('userform', { //faz rendering do form com mensagem que o form estava incompleto 
+    if (name == "") {
+        res.render('userform', {
             message: "Falta introduzir o nome!"
         });
-    }
-    //Adicionei algumas opções mais dignas de front-end para ser mais fácil para o tester
-    else if (username == "") {
+    } else if (username == "") {
         res.render('userform', {
             message: "Falta introduzir o nome de Utilizador!"
         });
@@ -80,12 +76,11 @@ function registerRocketChat(req, res) {
             message: "Formulário inválido!"
         });
     }
-
 };
 
-function renderForm(req, res) { //route inicial
+function renderForm(req, res) {
 
-    res.render('userform', { //rendering do form sem mensagem                                   
+    res.render('userform', {
         message: ''
     });
 

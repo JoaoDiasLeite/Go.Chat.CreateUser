@@ -1,4 +1,4 @@
-# GoChat
+# Go.Chat
 Aplicação de teste que interaje com a API do Rocketchat para registar um utilizador.
 
 Como correr e utilizar a aplicação: 
@@ -11,11 +11,11 @@ Como correr e utilizar a aplicação:
 
 -Fazer clone da aplicação Go.Chat;
 
--Instalar packages com npm install e correr aplicação com nodemon app.js;
+-Instalar packages com npm install e correr aplicação com npm start;
 
 Registar um utilizador de forma convencional:
 
--Aceder a aplicação em http://localhost:3002, preencher e submeter o formulário para criar um novo utilizador -Verificar no RocketChat se o utilizador foi criado;
+-Aceder a aplicação em http://localhost:3002/gochat/register, preencher e submeter o formulário para criar um novo utilizador -Verificar no RocketChat se o utilizador foi criado;
 
 Em alternativa é possível utilizar um software como Postman ou Insomnia para criar utilizadores de uma forma mais completa para isso são necessários os seguintes passos:
 
@@ -28,3 +28,6 @@ Em alternativa é possível utilizar um software como Postman ou Insomnia para c
 -"Instruções para a criação de utilizador":
 - name - String, username - String,  email - String, password - String, active - Boolean, roles - Array, joinDefaultChannels - Boolean, requirePasswordChange - Boolean, sendWelcomeEmail - Boolean, verified - Boolean, customFields - Object;
 
+Documentação da API em Swagger:
+
+-Para aceder à documentação da API em Swagger é necessário aceder, através de um browser, ao seguinte endereço: http://localhost:3002/gochat/api-docs/;
