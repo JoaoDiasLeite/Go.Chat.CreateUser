@@ -1,0 +1,35 @@
+{
+    "name": "Go.Chat",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:JoaoDiasLeite/Go.Chat.git"
+    },
+    "author": "João Leite",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/JoaoDiasLeite/Go.Chat/issues"
+    },
+    "homepage": "https://github.com/JoaoDiasLeite/Go.Chate",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "body-parser": "^1.19.0",
+        "dotenv": "^10.0.0",
+        "ejs": "^3.1.6",
+        "express": "^4.17.1",
+        "fs": "0.0.1-security",
+        "joi": "^17.4.0",
+        "joi-to-swagger": "^5.2.0",
+        "node": "^16.1.0",
+        "nodemon": "^2.0.7",
+        "swagger-jsdoc": "^6.0.0",
+        "swagger-ui-express": "^4.1.6",
+        "uuid": "^8.3.2"
+    }
+}
