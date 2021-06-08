@@ -3,6 +3,13 @@ const method = require('./methods');
 const validationError = require('../../utils/error/validationError');
 const rocketchatError = require('../../utils/error/rocketchatError');
 
+/**
+ * 
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @returns response and status
+ */
 async function createUser(req, res, next) {
 
     let validateParams = '';
